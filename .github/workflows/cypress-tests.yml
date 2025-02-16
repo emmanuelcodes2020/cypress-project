@@ -57,7 +57,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           wait-on: 'http://localhost:3000'  # Wait until the app is ready
-          record: true
+          
 
       - name: Save Cypress Videos
         if: always()
