@@ -1,5 +1,12 @@
 
 describe('Login Test', () => {
+  
+  afterEach(() => {
+    if (Cypress.currentTest.state === 'failed') {
+      cy.screenshot(); // Capture screenshot on failure
+    }
+  });
+  
   it('should log in successfully with valid credentials', () => {
     cy.visit('https://www.saucedemo.com/'); // Visit login page
 
