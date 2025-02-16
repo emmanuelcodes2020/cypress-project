@@ -27,15 +27,12 @@
 #       - name: Run Cypress tests
 #         run: npx cypress run
 
-
-
-
 name: Cypress Regression Tests
 
 on:
   push:
     branches:
-      - main  # Run tests when code is merged to main
+      - main
 
 jobs:
   test:
@@ -43,36 +40,36 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Updated version
+        uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v4  # Updated version
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress Tests
-        uses: cypress-io/github-action@v6  # Latest version
-        with:
-          start: npm start  # Start the app
-          wait-on: 'http://localhost:3000'  # Wait for the app to be ready
-          record: true  # Enables video recording (if configured)
+      - name: Start Application
+        run: npm run start &  # Use the start script from package.json
 
-      # Ensure Videos Are Uploaded (if available)
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          wait-on: 'http://localhost:3000'  # Wait until the app is ready
+          record: true
+
       - name: Save Cypress Videos
-        if: always()  # Ensures this step runs even if the test fails
-        uses: actions/upload-artifact@v4  # Updated to v4
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-videos
           path: cypress/videos/
-          if-no-files-found: ignore  # Prevents failure if no videos exist
+          if-no-files-found: ignore
 
-      # Ensure Screenshots Are Uploaded (Useful for Debugging)
       - name: Save Cypress Screenshots
         if: always()
-        uses: actions/upload-artifact@v4  # Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
           path: cypress/screenshots/
