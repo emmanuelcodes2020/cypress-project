@@ -1,28 +1,69 @@
-name: Cypress Tests
+# name: Cypress Tests
 
-on: 
+# on: 
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   cypress-run:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 18
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Run Cypress tests
+#         run: npx cypress run
+
+
+
+name: Cypress Regression Tests
+
+on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - main  # Run tests when code is merged to main
 
 jobs:
-  cypress-run:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests
-        run: npx cypress run
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v4
+        with:
+          start: npm start  # Start the app
+          wait-on: 'http://localhost:3000'  # Wait for the app to be ready
+
+      - name: Save Cypress Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-test-results
+          path: cypress/videos/
+
+      - name: Notify on Failure
+        if: failure()
+        run: echo "Cypress Tests Failed!"
